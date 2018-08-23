@@ -2,6 +2,7 @@ import QtQuick 2.4
 import "colors.js" as Colors
 
 PokemonInfoForm {
+    id: info
     function pad(num, size) {
         var s = num + "";
         while (s.length < size) s = "0" + s;
@@ -30,7 +31,7 @@ PokemonInfoForm {
         }
     }
 
-    function show(newNum) {
+    function show(num) {
         db.readTransaction(
             function(tx) {
                 var rs = tx.executeSql(
@@ -38,10 +39,9 @@ PokemonInfoForm {
 FROM pokemon \
 INNER JOIN pokemon_species_names \
 ON pokemon_species_names.pokemon_species_id = pokemon.id \
-WHERE pokemon_species_names.local_language_id = 9 AND pokemon.id = ?', [newNum]);
+WHERE pokemon_species_names.local_language_id = 9 AND pokemon.id = ?', [num]);
                 if(rs.rows.length === 0)
                     return;
-                num = newNum;
                 numLabel.text = "#" + pad(num, 3);
                 var result = rs.rows.item(0);
                 nameLabel.text = result.name;
@@ -54,7 +54,7 @@ INNER JOIN pokemon_types \
 ON pokemon_types.pokemon_id = pokemon.species_id \
 INNER JOIN type_names \
 ON type_names.type_id = pokemon_types.type_id \
-WHERE type_names.local_language_id = 9 AND pokemon.id = ?', [newNum]);
+WHERE type_names.local_language_id = 9 AND pokemon.id = ?', [num]);
                 type1Background.visible = typeRs.rows.length > 0;
                 type2Background.visible = typeRs.rows.length > 1;
                 type1.text = typeRs.rows.item(0).name;
@@ -68,18 +68,7 @@ WHERE type_names.local_language_id = 9 AND pokemon.id = ?', [newNum]);
 
         );
     }
-    focus: true
-    property int num: 0
-    Keys.onPressed: {
-        if(event.text.charAt(0) === "\b") {
-            var numStr = num + "";
-            show(numStr.substring(0, numStr.length - 1));
-        } else if(event.key === Qt.Key_Right) {
-            show(num + 1);
-        } else if(event.key === Qt.Key_Left) {
-            show(num - 1);
-        } else if(parseInt(event.text) !== Number.NaN) {
-            show((num + event.text) | 0);
-        }
+    Component.onCompleted: {
+        window.onPokemonChanged.connect(show)
     }
 }
