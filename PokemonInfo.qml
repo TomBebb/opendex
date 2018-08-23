@@ -30,7 +30,7 @@ PokemonInfoForm {
         }
     }
 
-    function changeNum(newNum) {
+    function show(newNum) {
         db.readTransaction(
             function(tx) {
                 var rs = tx.executeSql(
@@ -58,8 +58,6 @@ WHERE type_names.local_language_id = 9 AND pokemon.id = ?', [newNum]);
                 type1Background.visible = typeRs.rows.length > 0;
                 type2Background.visible = typeRs.rows.length > 1;
                 type1.text = typeRs.rows.item(0).name;
-                console.log(type1.text);
-                console.log(typeNameToColor(type1.text));
                 if(type1 != undefined)
                     type1Background.color = typeNameToColor(type1.text);
                 if(type2Background.visible) {
@@ -73,8 +71,15 @@ WHERE type_names.local_language_id = 9 AND pokemon.id = ?', [newNum]);
     focus: true
     property int num: 0
     Keys.onPressed: {
-        if(event.key === Qt.Key_Right) {
-            changeNum(num + 1);
+        if(event.text.charAt(0) === "\b") {
+            var numStr = num + "";
+            show(numStr.substring(0, numStr.length - 1));
+        } else if(event.key === Qt.Key_Right) {
+            show(num + 1);
+        } else if(event.key === Qt.Key_Left) {
+            show(num - 1);
+        } else if(parseInt(event.text) !== Number.NaN) {
+            show((num + event.text) | 0);
         }
     }
 }

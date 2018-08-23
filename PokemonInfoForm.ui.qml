@@ -4,11 +4,11 @@ Column {
     id: root
     width: 400
     height: 400
-    property alias genusLabel: genusLabel
     property alias type2: type2
     property alias type2Background: type2Background
     property alias type1Background: type1Background
     property alias type1: type1
+    property alias genusLabel: genusLabel
     property alias nameLabel: nameLabel
     property alias numLabel: numLabel
 
@@ -47,36 +47,42 @@ Column {
         style: Text.Raised
     }
 
-    Row {
+    Flow {
         id: types
-        width: 200
-        height: 30
+        width: 400
+        height: 400
+        spacing: 10
 
         Rectangle {
             id: type1Background
-            width: 200
-            height: 200
+            width: 100
+            height: 40
             color: "#ffffff"
-
+            radius: 2
+            border.width: 3
             Text {
                 id: type1
-                x: 88
-                y: 92
                 text: qsTr("Text")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent
                 font.pixelSize: 12
             }
         }
 
         Rectangle {
             id: type2Background
-            width: 200
-            height: 200
+            width: 100
+            height: 40
             color: "#ffffff"
+            radius: 1
+            border.width: 3
             Text {
                 id: type2
-                x: 88
-                y: 92
                 text: qsTr("Text")
+                verticalAlignment: Text.AlignVCenter
+                horizontalAlignment: Text.AlignHCenter
+                anchors.fill: parent
                 font.pixelSize: 12
             }
         }
